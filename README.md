@@ -1,8 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🖱️ Basic Clicker Game
 
-## Getting Started
+This project is a basic clicker game with some autoclicker and other upgrades
 
-First, run the development server:
+The project is based on [Next.js](https://nextjs.org/) bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+## Installation
+
+First clone this project on your local machine
+
+```bash
+git clone https://github.com/vbouillennec/clickme.git
+
+cd clickme
+```
+
+### Getting Started
+
+Then, run the development server:
 
 ```bash
 npm run dev
