@@ -1,5 +1,6 @@
 "use client";
 import Image from 'next/image'
+import { setInterval, clearInterval }from 'worker-timers';
 import ClickMeButton from "./components/ClickMeButton";
 import Counter from "./components/Counter";
 import RightSide from './components/RightSide';
@@ -9,23 +10,24 @@ import LeftSide from './components/LeftSide';
 export default function Home() {
   const [count, setCount] = useState<number>(0);
   const [clickDamage, setClickDamage] = useState<number>(1);
+  const [autoclickPerSecond, setAutoclickPerSecond] = useState<number>(0);
   const [upgrades, setUpgrades] = useState([
     {
       name: "Auto clicker",
       price: 10,
-      clickRates: 0.1,
+      clickRates: 1,
       count: 0,
     },
     {
       name: "Personnal assistant",
       price: 50,
-      clickRates: 1,
+      clickRates: 10,
       count: 0,
     }
   ]);
   const [powers, setPowers] = useState([
     {
-      name: "+1 Click damage",
+      name: "Click damage",
       price: 10,
       priceMultiplier: 10,
       damage: 1,
@@ -35,19 +37,17 @@ export default function Home() {
 
   useEffect(() => {
     const triggerAutoClickers = () => {
-      const autoClickers = upgrades.filter((upgrade: any) => upgrade.count > 0);
-      autoClickers.forEach((autoClicker: any) => {
-        setCount(count + (autoClicker.clickRates * autoClicker.count));
-      });
+      setCount(count + (autoclickPerSecond/10));
     };
+    
+    const intervalId= setInterval(triggerAutoClickers, 100);
 
-    const interval = setInterval(() => {
-      triggerAutoClickers();
-    }, 100);
+    document.title = `You've earned ${~~count} clicks!`;
+    
     return () => {
-      clearInterval(interval);
+      clearInterval(intervalId);
     };
-  }, [count, upgrades]);
+  }, [autoclickPerSecond, count, upgrades]);
 
   const handleClick: any = () => {
     setCount(count + clickDamage);
@@ -55,14 +55,17 @@ export default function Home() {
 
   const activeUpgrade = (index: any) => {
     let costPrice = 0;
+	  let countAutoclickPerSecond = 0;
     const updatedUpgrades = upgrades.map((upgrade: any, i: any) => {
       if (i === index) {
         costPrice = upgrade.price;
         upgrade.count++;
         upgrade.price = Math.floor(upgrade.price * 1.2);
       }
+      countAutoclickPerSecond = countAutoclickPerSecond + (upgrade.clickRates * upgrade.count);
       return upgrade;
-    });
+    });    
+	  setAutoclickPerSecond(countAutoclickPerSecond);
     setUpgrades(updatedUpgrades);
     setCount(count - costPrice);
   }
@@ -75,6 +78,7 @@ export default function Home() {
       if (i === index) {
         costPrice = power.price;
         powerDamage = power.damage;
+        power.damage = power.damage * 4;
         power.count++;
         power.price = power.price * power.priceMultiplier;
       }
@@ -87,8 +91,8 @@ export default function Home() {
   
   return (
     <>
-      <LeftSide count={count} powers={powers} activePower={activePower} />
-      <RightSide count={count} upgrades={upgrades} activeUpgrade={activeUpgrade} />
+      <LeftSide count={count} powers={powers} activePower={activePower} clickDamage={clickDamage} />
+      <RightSide count={count} upgrades={upgrades} activeUpgrade={activeUpgrade} autoclickPerSecond={autoclickPerSecond} />
       <main className="flex min-h-screen flex-col items-center justify-center gap-12 p-24">
       <Counter count={ count } />
       <ClickMeButton handleClick={handleClick} />

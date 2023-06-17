@@ -12,6 +12,8 @@ First clone this project on your local machine
 git clone https://github.com/vbouillennec/clickme.git
 
 cd clickme
+
+npm i
 ```
 
 ### Getting Started
